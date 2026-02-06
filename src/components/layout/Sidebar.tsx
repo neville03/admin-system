@@ -1,0 +1,75 @@
+import { NavLink, useNavigate } from "react-router-dom";
+import {
+  LayoutDashboard,
+  Users,
+  Monitor,
+  ShieldCheck,
+  Flag,
+  MessageSquare,
+  Settings,
+  LogOut,
+} from "lucide-react";
+
+const navItems = [
+  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/users", label: "Users", icon: Users },
+  { to: "/earnings", label: "Earnings", icon: Monitor },
+  { to: "/verifications", label: "Verifications", icon: ShieldCheck },
+  { to: "/support", label: "Support & Flags", icon: Flag },
+];
+
+const bottomItems = [
+  { to: "/messages", label: "Messages", icon: MessageSquare },
+  { to: "/settings", label: "Settings", icon: Settings },
+];
+
+export default function Sidebar() {
+  const navigate = useNavigate();
+
+  const linkClass = ({ isActive }: { isActive: boolean }) =>
+    `flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+      isActive
+        ? "bg-accent text-accent-foreground border-l-4 border-primary -ml-px"
+        : "text-sidebar-foreground hover:bg-muted"
+    }`;
+
+  return (
+    <aside className="w-64 bg-card border-r border-border flex flex-col h-screen sticky top-0">
+      {/* Logo */}
+      <div className="p-6 flex items-center gap-2">
+        <span className="text-2xl">🎆</span>
+        <span className="text-xl font-bold text-foreground">Event Bridge</span>
+      </div>
+
+      {/* Main nav */}
+      <nav className="flex-1 px-3 space-y-1">
+        {navItems.map((item) => (
+          <NavLink key={item.to} to={item.to} className={linkClass}>
+            <item.icon className="w-5 h-5" />
+            {item.label}
+          </NavLink>
+        ))}
+      </nav>
+
+      {/* Bottom nav */}
+      <nav className="px-3 pb-4 space-y-1">
+        {bottomItems.map((item) => (
+          <NavLink key={item.to} to={item.to} className={linkClass}>
+            <item.icon className="w-5 h-5" />
+            {item.label}
+          </NavLink>
+        ))}
+        <button
+          onClick={() => {
+            localStorage.removeItem("auth_token");
+            navigate("/");
+          }}
+          className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-sidebar-foreground hover:bg-muted w-full"
+        >
+          <LogOut className="w-5 h-5" />
+          Logout
+        </button>
+      </nav>
+    </aside>
+  );
+}
