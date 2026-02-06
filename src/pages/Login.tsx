@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo-full.png";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -35,7 +35,7 @@ export default function Login() {
         {/* Logo */}
         <div className="text-center space-y-2">
           <div className="flex items-center justify-center">
-            <img src={logo} alt="Event Bridge" className="h-16 w-auto" />
+            <img src={logo} alt="Event Bridge" className="h-20 w-auto" />
           </div>
           <h1 className="text-2xl font-bold text-foreground">Hello Admin,</h1>
           <p className="text-muted-foreground text-sm">

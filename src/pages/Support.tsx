@@ -71,7 +71,7 @@ export default function Support() {
         </TabsList>
 
         <TabsContent value="tickets" className="mt-6">
-          <div className="bg-card rounded-xl border border-border">
+          <div className="bg-card rounded-xl border border-border overflow-x-auto">
             <div className="p-4 border-b border-border">
               <div className="relative w-80">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -91,7 +91,7 @@ export default function Support() {
               </thead>
               <tbody>
                 {tickets.map((t) => (
-                  <tr key={t.id} className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors">
+                  <tr key={t.id} className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => setSelectedTicket(t)}>
                     <td className="p-4 font-medium text-foreground">#{t.id}</td>
                     <td className="p-4 text-muted-foreground max-w-[200px] truncate">{t.subject}</td>
                     <td className="p-4">
@@ -105,7 +105,7 @@ export default function Support() {
                     </td>
                     <td className="p-4 text-muted-foreground">{t.date}</td>
                     <td className="p-4 text-right">
-                      <button className="p-1.5 hover:bg-muted rounded-lg" onClick={() => setSelectedTicket(t)}>
+                      <button className="p-1.5 hover:bg-muted rounded-lg" onClick={(e) => { e.stopPropagation(); setSelectedTicket(t); }}>
                         <Eye className="w-4 h-4 text-muted-foreground" />
                       </button>
                     </td>
@@ -117,7 +117,7 @@ export default function Support() {
         </TabsContent>
 
         <TabsContent value="flags" className="mt-6">
-          <div className="bg-card rounded-xl border border-border">
+          <div className="bg-card rounded-xl border border-border overflow-x-auto">
             <div className="p-4 border-b border-border">
               <div className="relative w-80">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -137,7 +137,7 @@ export default function Support() {
               </thead>
               <tbody>
                 {flags.map((f) => (
-                  <tr key={f.id} className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors">
+                  <tr key={f.id} className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => setSelectedFlag(f)}>
                     <td className="p-4 font-medium text-foreground">#{f.id}</td>
                     <td className="p-4 text-muted-foreground max-w-[200px] truncate">{f.content}</td>
                     <td className="p-4">
@@ -155,10 +155,10 @@ export default function Support() {
                     <td className="p-4 text-muted-foreground">{f.reason}</td>
                     <td className="p-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <button className="p-1.5 hover:bg-muted rounded-lg" onClick={() => setSelectedFlag(f)}>
+                        <button className="p-1.5 hover:bg-muted rounded-lg" onClick={(e) => { e.stopPropagation(); setSelectedFlag(f); }}>
                           <Eye className="w-4 h-4 text-muted-foreground" />
                         </button>
-                        <button className="p-1.5 hover:bg-muted rounded-lg">
+                        <button className="p-1.5 hover:bg-muted rounded-lg" onClick={(e) => e.stopPropagation()}>
                           <Trash2 className="w-4 h-4 text-muted-foreground" />
                         </button>
                       </div>
