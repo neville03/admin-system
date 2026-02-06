@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import logo from "@/assets/logo.png";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -33,9 +34,8 @@ export default function Login() {
       <div className="w-full max-w-md bg-card rounded-2xl shadow-sm border border-border p-8 space-y-6">
         {/* Logo */}
         <div className="text-center space-y-2">
-          <div className="flex items-center justify-center gap-2">
-            <span className="text-3xl">🎆</span>
-            <span className="text-2xl font-bold text-foreground">Event Bridge</span>
+          <div className="flex items-center justify-center">
+            <img src={logo} alt="Event Bridge" className="h-16 w-auto" />
           </div>
           <h1 className="text-2xl font-bold text-foreground">Hello Admin,</h1>
           <p className="text-muted-foreground text-sm">
