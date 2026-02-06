@@ -9,7 +9,7 @@ import {
   Settings,
   LogOut,
 } from "lucide-react";
-import logo from "@/assets/logo.png";
+import logo from "@/assets/logo-sidebar.png";
 
 const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -49,8 +49,8 @@ export default function Sidebar({ open, onClose }: SidebarProps) {
       `}
     >
       {/* Logo */}
-      <div className="p-6 flex items-center gap-2">
-        <img src={logo} alt="Event Bridge" className="h-10 w-auto" />
+      <div className="p-5 flex items-center">
+        <img src={logo} alt="Event Bridge" className="h-14 w-auto" />
       </div>
 
       {/* Main nav */}
