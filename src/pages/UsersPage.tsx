@@ -9,16 +9,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import UserProfileCard from "@/components/users/UserProfileCard";
 
 const mockUsers = [
-  { id: "USR-8895", name: "Marcus Chen", initials: "MC", email: "marcus.v@vendor.co", role: "Vendor", joinDate: "Sep 28, 2023" },
-  { id: "USR-8902", name: "Sarah Jenkins", initials: "SJ", email: "s.jenkins@example.com", role: "Host", joinDate: "Oct 12, 2023" },
-  { id: "USR-8831", name: "Royal Touch Decor", initials: "RD", email: "thomas@eventsplus.org", role: "Vendor", joinDate: "Jul 30, 2023" },
-  { id: "USR-8842", name: "Elena Rodriguez", initials: "ER", email: "e.rodriguez@mail.com", role: "Host", joinDate: "Aug 15, 2023" },
+  { id: "USR-8895", name: "Marcus Chen", initials: "MC", email: "marcus.v@vendor.co", role: "Vendor" as const, joinDate: "Sep 28, 2023", location: "Kampala, Uganda.", events: 12, yearsExp: 5, rating: 4.9, totalReviews: 84 },
+  { id: "USR-8902", name: "Sarah Jenkins", initials: "SJ", email: "s.jenkins@example.com", role: "Host" as const, joinDate: "Oct 12, 2023", location: "Kampala, Uganda.", eventsHosted: 12, reviewsGiven: 25, vendorsBooked: 8 },
+  { id: "USR-8831", name: "Royal Touch Decor", initials: "RD", email: "thomas@eventsplus.org", role: "Vendor" as const, joinDate: "Jul 30, 2023", location: "Kampala, Uganda.", events: 12, yearsExp: 5, rating: 4.9, totalReviews: 84 },
+  { id: "USR-8842", name: "Elena Rodriguez", initials: "ER", email: "e.rodriguez@mail.com", role: "Host" as const, joinDate: "Aug 15, 2023", location: "Kampala, Uganda.", eventsHosted: 8, reviewsGiven: 15, vendorsBooked: 5 },
 ];
 
 export default function UsersPage() {
   const [search, setSearch] = useState("");
+  const [selectedUser, setSelectedUser] = useState<typeof mockUsers[0] | null>(null);
 
   return (
     <div className="space-y-6">
@@ -102,7 +104,10 @@ export default function UsersPage() {
                 <td className="p-4 text-muted-foreground">{user.joinDate}</td>
                 <td className="p-4 text-right">
                   <div className="flex items-center justify-end gap-2">
-                    <button className="p-1.5 hover:bg-muted rounded-lg transition-colors">
+                    <button
+                      className="p-1.5 hover:bg-muted rounded-lg transition-colors"
+                      onClick={() => setSelectedUser(user)}
+                    >
                       <Eye className="w-4 h-4 text-muted-foreground" />
                     </button>
                     <button className="p-1.5 hover:bg-muted rounded-lg transition-colors">
@@ -129,6 +134,13 @@ export default function UsersPage() {
           </div>
         </div>
       </div>
+
+      {selectedUser && (
+        <UserProfileCard
+          user={selectedUser}
+          onClose={() => setSelectedUser(null)}
+        />
+      )}
     </div>
   );
 }
