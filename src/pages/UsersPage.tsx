@@ -24,18 +24,18 @@ export default function UsersPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">User Management</h1>
-          <p className="text-muted-foreground">Manage, filter, and monitor all platform participants.</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground">User Management</h1>
+          <p className="text-muted-foreground text-sm md:text-base">Manage, filter, and monitor all platform participants.</p>
         </div>
-        <Button variant="outline" className="gap-2">
+        <Button variant="outline" className="gap-2 self-start">
           <Download className="w-4 h-4" /> Export CSV
         </Button>
       </div>
 
       {/* Filters */}
-      <div className="bg-card rounded-xl border border-border p-4 flex items-center gap-4">
+      <div className="bg-card rounded-xl border border-border p-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
@@ -71,7 +71,7 @@ export default function UsersPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-card rounded-xl border border-border overflow-hidden">
+      <div className="bg-card rounded-xl border border-border overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-border">
@@ -85,7 +85,7 @@ export default function UsersPage() {
           </thead>
           <tbody>
             {mockUsers.map((user) => (
-              <tr key={user.id} className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors">
+              <tr key={user.id} className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => setSelectedUser(user)}>
                 <td className="p-4 text-muted-foreground">#{user.id}</td>
                 <td className="p-4">
                   <div className="flex items-center gap-3">
@@ -106,11 +106,11 @@ export default function UsersPage() {
                   <div className="flex items-center justify-end gap-2">
                     <button
                       className="p-1.5 hover:bg-muted rounded-lg transition-colors"
-                      onClick={() => setSelectedUser(user)}
+                      onClick={(e) => { e.stopPropagation(); setSelectedUser(user); }}
                     >
                       <Eye className="w-4 h-4 text-muted-foreground" />
                     </button>
-                    <button className="p-1.5 hover:bg-muted rounded-lg transition-colors">
+                    <button className="p-1.5 hover:bg-muted rounded-lg transition-colors" onClick={(e) => e.stopPropagation()}>
                       <Trash2 className="w-4 h-4 text-muted-foreground" />
                     </button>
                   </div>

@@ -24,7 +24,12 @@ const bottomItems = [
   { to: "/settings", label: "Settings", icon: Settings },
 ];
 
-export default function Sidebar() {
+interface SidebarProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+export default function Sidebar({ open, onClose }: SidebarProps) {
   const navigate = useNavigate();
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
@@ -35,7 +40,14 @@ export default function Sidebar() {
     }`;
 
   return (
-    <aside className="w-64 bg-card border-r border-border flex flex-col h-screen sticky top-0">
+    <aside
+      className={`
+        fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border flex flex-col h-screen
+        transition-transform duration-200 ease-in-out
+        lg:sticky lg:top-0 lg:translate-x-0
+        ${open ? "translate-x-0" : "-translate-x-full"}
+      `}
+    >
       {/* Logo */}
       <div className="p-6 flex items-center gap-2">
         <img src={logo} alt="Event Bridge" className="h-10 w-auto" />
@@ -44,7 +56,7 @@ export default function Sidebar() {
       {/* Main nav */}
       <nav className="flex-1 px-3 space-y-1">
         {navItems.map((item) => (
-          <NavLink key={item.to} to={item.to} className={linkClass}>
+          <NavLink key={item.to} to={item.to} className={linkClass} onClick={onClose}>
             <item.icon className="w-5 h-5" />
             {item.label}
           </NavLink>
@@ -54,7 +66,7 @@ export default function Sidebar() {
       {/* Bottom nav */}
       <nav className="px-3 pb-4 space-y-1">
         {bottomItems.map((item) => (
-          <NavLink key={item.to} to={item.to} className={linkClass}>
+          <NavLink key={item.to} to={item.to} className={linkClass} onClick={onClose}>
             <item.icon className="w-5 h-5" />
             {item.label}
           </NavLink>
@@ -63,6 +75,7 @@ export default function Sidebar() {
           onClick={() => {
             localStorage.removeItem("auth_token");
             navigate("/");
+            onClose();
           }}
           className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-sidebar-foreground hover:bg-muted w-full"
         >

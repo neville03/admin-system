@@ -22,12 +22,12 @@ const vendors = [
 export default function Earnings() {
   return (
     <div className="space-y-6">
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Earnings Dashboard</h1>
-          <p className="text-muted-foreground">Track marketplace revenue, vendor performance and pending payouts.</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground">Earnings Dashboard</h1>
+          <p className="text-muted-foreground text-sm md:text-base">Track marketplace revenue, vendor performance and pending payouts.</p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <Button variant="outline" className="gap-2">
             <Calendar className="w-4 h-4" /> Oct 01 - Oct 31, 2023
           </Button>
@@ -38,7 +38,7 @@ export default function Earnings() {
       </div>
 
       {/* Summary cards */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <div className="bg-card rounded-xl border border-border p-6">
           <div className="flex items-center justify-between mb-3">
             <div className="w-10 h-10 rounded-lg bg-accent flex items-center justify-center">
@@ -75,9 +75,9 @@ export default function Earnings() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Vendor performance table */}
-        <div className="col-span-2 bg-card rounded-xl border border-border">
+        <div className="col-span-1 lg:col-span-2 bg-card rounded-xl border border-border overflow-x-auto">
           <div className="p-4 flex items-center justify-between border-b border-border">
             <h3 className="text-xs font-semibold tracking-wider text-muted-foreground">VENDOR PERFORMANCE</h3>
             <div className="relative w-48">

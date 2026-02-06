@@ -25,9 +25,9 @@ export default function Verifications() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Vendor list */}
-        <div className="col-span-2 bg-card rounded-xl border border-border">
+        <div className="col-span-1 lg:col-span-2 bg-card rounded-xl border border-border overflow-x-auto">
           <div className="p-4 flex items-center justify-between border-b border-border">
             <h3 className="text-xs font-semibold tracking-wider text-muted-foreground">VENDOR LIST</h3>
             <div className="relative w-48">
