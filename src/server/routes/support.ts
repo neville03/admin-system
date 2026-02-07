@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { db, schema } from "../../lib/db";
-import { desc, eq, and, like } from "drizzle-orm";
+import { desc, eq, and, like, count } from "drizzle-orm";
 import { authenticateToken, AuthRequest } from "../middleware/auth";
 import { supportTickets, supportTicketMessages, flags, users, vendorProfiles } from "../../db/schemas";
 
@@ -38,7 +38,10 @@ router.get("/tickets", authenticateToken, async (req: AuthRequest, res) => {
       .where(conditions.length > 0 ? and(...conditions) : undefined)
       .orderBy(desc(supportTickets.createdAt));
 
-    res.json({ tickets });
+    // Get total count
+    const [totalCount] = await db.select({ count: count() }).from(supportTickets);
+
+    res.json({ tickets, total: totalCount.count || 0 });
   } catch (error) {
     console.error("Error fetching tickets:", error);
     res.status(500).json({ error: "Failed to fetch tickets" });
@@ -233,7 +236,10 @@ router.get("/flags", authenticateToken, async (req: AuthRequest, res) => {
       .where(conditions.length > 0 ? and(...conditions) : undefined)
       .orderBy(desc(flags.flaggedDate));
 
-    res.json({ flags: flagsList });
+    // Get total count
+    const [totalCount] = await db.select({ count: count() }).from(flags);
+
+    res.json({ flags: flagsList, total: totalCount.count || 0 });
   } catch (error) {
     console.error("Error fetching flags:", error);
     res.status(500).json({ error: "Failed to fetch flags" });

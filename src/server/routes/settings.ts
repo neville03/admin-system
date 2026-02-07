@@ -91,7 +91,7 @@ router.get("/team", authenticateToken, requireAdmin, async (req: AuthRequest, re
 // Update admin user role/permissions
 router.put("/team/:id", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
     const { isActive, role } = req.body;
 
     if (isNaN(id)) {
@@ -156,7 +156,7 @@ router.post("/roles", authenticateToken, requireAdmin, async (req: AuthRequest, 
 // Update role
 router.put("/roles/:id", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
     const { name, displayName, description, level, permissions } = req.body;
 
     if (isNaN(id)) {
@@ -189,7 +189,7 @@ router.put("/roles/:id", authenticateToken, requireAdmin, async (req: AuthReques
 // Delete role
 router.delete("/roles/:id", authenticateToken, requireAdmin, async (req: AuthRequest, res) => {
   try {
-    const id = parseInt(req.params.id);
+    const id = parseInt(Array.isArray(req.params.id) ? req.params.id[0] : req.params.id);
 
     if (isNaN(id)) {
       return res.status(400).json({ error: "Invalid role ID" });

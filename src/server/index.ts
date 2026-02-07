@@ -17,6 +17,7 @@ import authRoutes from "./routes/auth";
 import verificationRoutes from "./routes/verifications";
 import settingsRoutes from "./routes/settings";
 import supportRoutes from "./routes/support";
+import earningsRoutes from "./routes/earnings";
 
 // Use routes
 app.use("/api/auth", authRoutes);
@@ -25,6 +26,7 @@ app.use("/api/users", usersRoutes);
 app.use("/api/verifications", verificationRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/support", supportRoutes);
+app.use("/api/earnings", earningsRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {

@@ -138,6 +138,37 @@ export function useFlag(id: number) {
   });
 }
 
+// Earnings hooks
+export function useEarningsStats() {
+  return useQuery({
+    queryKey: ["earnings-stats"],
+    queryFn: async () => fetchWithAuth(`${API_BASE}/api/earnings/stats`),
+    staleTime: 1000 * 60, // 1 minute
+  });
+}
+
+export function useEarningsChart(months = 12) {
+  return useQuery({
+    queryKey: ["earnings-chart", months],
+    queryFn: async () => fetchWithAuth(`${API_BASE}/api/earnings/chart?months=${months}`),
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+}
+
+export function useEarningsVendors(options?: { page?: number; limit?: number; search?: string }) {
+  return useQuery({
+    queryKey: ["earnings-vendors", options],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (options?.page) params.set("page", options.page.toString());
+      if (options?.limit) params.set("limit", options.limit.toString());
+      if (options?.search) params.set("search", options.search);
+      return fetchWithAuth(`${API_BASE}/api/earnings/vendors?${params.toString()}`);
+    },
+    staleTime: 1000 * 60, // 1 minute
+  });
+}
+
 // Settings hooks
 export function useGeneralSettings() {
   return useQuery({

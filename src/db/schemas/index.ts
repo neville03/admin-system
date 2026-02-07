@@ -1595,7 +1595,7 @@ export const auditLogs = pgTable('audit_logs', {
   };
 });
 
-/* ===================== TYPE EXPORTS ===================== */
+
 export type AdminSettings = typeof adminSettings.$inferSelect;
 export type NewAdminSettings = typeof adminSettings.$inferInsert;
 

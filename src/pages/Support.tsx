@@ -16,6 +16,8 @@ export default function Support() {
 
   const tickets = ticketsData?.tickets || [];
   const flags = flagsData?.flags || [];
+  const ticketsTotal = ticketsData?.total || 0;
+  const flagsTotal = flagsData?.total || 0;
 
   return (
     <div className="space-y-6">
@@ -30,13 +32,13 @@ export default function Support() {
             value="tickets"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none pb-3 px-0"
           >
-            Support Tickets <span className="ml-2 bg-muted text-muted-foreground text-xs px-2 py-0.5 rounded-full">12</span>
+            Support Tickets <span className="ml-2 bg-muted text-muted-foreground text-xs px-2 py-0.5 rounded-full">{ticketsTotal}</span>
           </TabsTrigger>
           <TabsTrigger
             value="flags"
             className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none pb-3 px-0"
           >
-            Flagged Content <span className="ml-2 bg-primary/20 text-primary text-xs px-2 py-0.5 rounded-full">5</span>
+            Flagged Content <span className="ml-2 bg-primary/20 text-primary text-xs px-2 py-0.5 rounded-full">{flagsTotal}</span>
           </TabsTrigger>
         </TabsList>
 
