@@ -2,21 +2,29 @@ import { X, MapPin, MessageSquare, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import SuspendConfirmDialog from "./SuspendConfirmDialog";
+import { format } from "date-fns";
 
 interface UserProfile {
-  id: string;
-  name: string;
-  initials: string;
-  role: "Vendor" | "Host";
-  joinDate: string;
+  id: number;
+  email: string;
+  firstName: string;
+  lastName: string;
+  accountType: string;
+  isActive: boolean;
+  createdAt: Date;
   location?: string;
-  eventsHosted?: number;
-  reviewsGiven?: number;
-  vendorsBooked?: number;
-  events?: number;
-  yearsExp?: number;
-  rating?: number;
-  totalReviews?: number;
+  phone?: string;
+  vendorProfile?: {
+    id: number;
+    businessName?: string;
+    description?: string;
+    city?: string;
+    rating?: number;
+    reviewCount?: number;
+    verificationStatus?: string;
+    isVerified?: boolean;
+    subscriptionStatus?: string;
+  };
 }
 
 interface UserProfileCardProps {
@@ -26,7 +34,13 @@ interface UserProfileCardProps {
 
 export default function UserProfileCard({ user, onClose }: UserProfileCardProps) {
   const [showSuspendDialog, setShowSuspendDialog] = useState(false);
-  const isHost = user.role === "Host";
+  const isVendor = user.accountType === "VENDOR";
+  const fullName = isVendor && user.vendorProfile?.businessName
+    ? user.vendorProfile.businessName
+    : `${user.firstName} ${user.lastName}`;
+  const initials = isVendor && user.vendorProfile?.businessName
+    ? user.vendorProfile.businessName.substring(0, 2).toUpperCase()
+    : `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase();
 
   return (
     <>
@@ -35,70 +49,74 @@ export default function UserProfileCard({ user, onClose }: UserProfileCardProps)
           className="bg-card rounded-2xl border border-border shadow-xl w-full max-w-sm p-6 relative"
           onClick={(e) => e.stopPropagation()}
         >
-          <button onClick={onClose} className="absolute top-4 right-4 p-1 hover:bg-muted rounded">
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close profile"
+            className="absolute top-4 right-4 p-1 hover:bg-muted rounded"
+          >
             <X className="w-4 h-4 text-muted-foreground" />
           </button>
 
           {/* Avatar */}
           <div className="flex flex-col items-center mb-4">
             <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center text-2xl font-bold text-muted-foreground mb-3">
-              {user.initials}
+              {initials}
             </div>
-            <h2 className="text-xl font-bold text-foreground">{user.name}</h2>
+            <h2 className="text-xl font-bold text-foreground">{fullName}</h2>
             <div className="flex items-center gap-2 mt-1">
               <span className="bg-accent text-accent-foreground text-xs font-semibold px-2.5 py-0.5 rounded-full">
-                {user.role.toUpperCase()}
+                {user.accountType.toUpperCase()}
               </span>
               <span className="text-sm text-muted-foreground">#{user.id}</span>
-              <span className="text-sm text-muted-foreground">Joined {user.joinDate}</span>
+              <span className="text-sm text-muted-foreground">Joined {format(new Date(user.createdAt), "MMM d, yyyy")}</span>
             </div>
-            {user.location && (
+            {(user.location || user.vendorProfile?.city) && (
               <div className="flex items-center gap-1 mt-2 text-sm text-muted-foreground">
                 <MapPin className="w-3.5 h-3.5 text-primary" />
-                {user.location}
+                {user.vendorProfile?.city || user.location}
+              </div>
+            )}
+            {user.email && (
+              <div className="text-sm text-muted-foreground mt-1">
+                {user.email}
               </div>
             )}
           </div>
 
           {/* Stats */}
           <div className="border border-border rounded-xl divide-x divide-border flex mb-4">
-            {isHost ? (
+            {isVendor && user.vendorProfile ? (
               <>
                 <div className="flex-1 text-center py-4">
-                  <p className="text-xl font-bold text-foreground">{user.eventsHosted ?? 0}</p>
-                  <p className="text-[10px] text-muted-foreground tracking-wider font-medium">EVENTS HOSTED</p>
+                  <p className="text-xl font-bold text-foreground">{user.vendorProfile.rating || 0}</p>
+                  <p className="text-[10px] text-muted-foreground tracking-wider font-medium">★ RATING</p>
                 </div>
                 <div className="flex-1 text-center py-4">
-                  <p className="text-xl font-bold text-foreground">{user.reviewsGiven ?? 0}</p>
-                  <p className="text-[10px] text-muted-foreground tracking-wider font-medium">REVIEWS GIVEN</p>
+                  <p className="text-xl font-bold text-foreground">{user.vendorProfile.reviewCount || 0}</p>
+                  <p className="text-[10px] text-muted-foreground tracking-wider font-medium">REVIEWS</p>
                 </div>
                 <div className="flex-1 text-center py-4">
-                  <p className="text-xl font-bold text-foreground">{user.vendorsBooked ?? 0}</p>
-                  <p className="text-[10px] text-muted-foreground tracking-wider font-medium">VENDORS BOOKED</p>
+                  <p className="text-xl font-bold text-foreground">{user.vendorProfile.verificationStatus?.toUpperCase() || "PENDING"}</p>
+                  <p className="text-[10px] text-muted-foreground tracking-wider font-medium">STATUS</p>
                 </div>
               </>
             ) : (
               <>
                 <div className="flex-1 text-center py-4">
-                  <p className="text-xl font-bold text-foreground">{user.events ?? 0}</p>
-                  <p className="text-[10px] text-muted-foreground tracking-wider font-medium">EVENTS</p>
+                  <p className="text-xl font-bold text-foreground">{user.phone || "-"}</p>
+                  <p className="text-[10px] text-muted-foreground tracking-wider font-medium">PHONE</p>
                 </div>
                 <div className="flex-1 text-center py-4">
-                  <p className="text-xl font-bold text-foreground">{user.yearsExp ?? 0}</p>
-                  <p className="text-[10px] text-muted-foreground tracking-wider font-medium">YEARS EXP</p>
-                </div>
-                <div className="flex-1 text-center py-4">
-                  <div className="flex items-center justify-center gap-1">
-                    <span className="text-xl font-bold text-foreground">★ {user.rating ?? 0}</span>
-                  </div>
-                  <p className="text-[10px] text-muted-foreground tracking-wider font-medium">{user.totalReviews ?? 0} REVIEWS</p>
+                  <p className="text-xl font-bold text-foreground">{user.isActive ? "Active" : "Inactive"}</p>
+                  <p className="text-[10px] text-muted-foreground tracking-wider font-medium">STATUS</p>
                 </div>
               </>
             )}
           </div>
 
           {/* Actions */}
-          {isHost ? (
+          {isVendor ? (
             <div className="grid grid-cols-2 gap-3 mb-3">
               <Button variant="outline" className="gap-2">
                 <MessageSquare className="w-4 h-4" /> Send Message
@@ -131,7 +149,7 @@ export default function UserProfileCard({ user, onClose }: UserProfileCardProps)
 
       {showSuspendDialog && (
         <SuspendConfirmDialog
-          userName={user.name}
+          userName={fullName}
           onClose={() => setShowSuspendDialog(false)}
           onConfirm={() => {
             setShowSuspendDialog(false);

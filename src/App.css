@@ -37,6 +37,19 @@
   padding: 2em;
 }
 
+/* Dashboard chart legend colors */
+span[data-color="verified"] {
+  background-color: hsl(21, 90%, 56%);
+}
+
+span[data-color="pending"] {
+  background-color: hsl(0, 0%, 20%);
+}
+
+span[data-color="rejected"] {
+  background-color: hsl(0, 0%, 85%);
+}
+
 .read-the-docs {
   color: #888;
 }

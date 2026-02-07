@@ -4,48 +4,18 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import TicketDetailPanel from "@/components/support/TicketDetailPanel";
 import FlagDetailPanel from "@/components/support/FlagDetailPanel";
-
-const tickets = [
-  {
-    id: "TK-8842",
-    subject: "Rude host during booking process",
-    reporter: "Sarah Jenkins",
-    initials: "SJ",
-    status: "OPEN" as const,
-    date: "Oct 24, 2023",
-    initialMessage: "This host was extremely rude and unprofessional during the booking process. I tried to ask about the catering options for my corporate event and they ghosted me for three days, then replied with a single word \"No\". I would like a refund or a formal investigation into their behavior.",
-    reporterRole: "Host",
-    memberSince: "2022",
-    messages: [
-      { from: "user" as const, text: "I've attached the screenshots of the chat logs for your review.", time: "10:24 AM", sender: "Sarah Jenkins" },
-      { from: "admin" as const, text: "Hello Sarah, thank you for reaching out. We are currently reviewing the screenshots provided and will take appropriate action. One of our specialists will get back to you within 2 hours.", time: "10:45 AM", sender: "Admin (Support Team)" },
-      { from: "user" as const, text: "Thank you. Please let me know if you need any further information from my side.", time: "11:02 AM", sender: "Sarah Jenkins" },
-    ],
-  },
-  {
-    id: "TK-8843",
-    subject: "Payment not received for event",
-    reporter: "John Smith",
-    initials: "JS",
-    status: "OPEN" as const,
-    date: "Oct 25, 2023",
-    initialMessage: "I completed an event 2 weeks ago but haven't received payment yet.",
-    reporterRole: "Vendor",
-    memberSince: "2021",
-    messages: [],
-  },
-];
-
-const flags = [
-  { id: "FL-2091", content: "This host was extremely rude and unprofessional. They canceled my booking 2 hours before the event with no explanation and then blocked my phone number when I tried to call for a refund. Extremely disappointed.", flagger: "Sarah Jenkins", fInitials: "SJ", fRole: "Host", vendor: "Royal Touch Decor", vInitials: "RT", vRole: "Vendor", reason: "Harassment", flaggedDate: "Feb 5, 2026" },
-  { id: "FL-2092", content: "Wonderful service, very polite and professional throughout.", flagger: "John Smith", fInitials: "JS", fRole: "Host", vendor: "Emily Johnson", vInitials: "EJ", vRole: "Vendor", reason: "Positive Feedback", flaggedDate: "Feb 3, 2026" },
-  { id: "FL-2093", content: "The check-in process was chaotic and disorganized.", flagger: "Michael Brown", fInitials: "MB", fRole: "Host", vendor: "Lisa White", vInitials: "LW", vRole: "Vendor", reason: "Negative Experience", flaggedDate: "Feb 1, 2026" },
-];
+import { useSupportTickets, useFlags } from "@/lib/api/hooks";
 
 export default function Support() {
   const [tab, setTab] = useState("flags");
-  const [selectedTicket, setSelectedTicket] = useState<typeof tickets[0] | null>(null);
-  const [selectedFlag, setSelectedFlag] = useState<typeof flags[0] | null>(null);
+  const [selectedTicket, setSelectedTicket] = useState<any | null>(null);
+  const [selectedFlag, setSelectedFlag] = useState<any | null>(null);
+
+  const { data: ticketsData, isLoading: ticketsLoading } = useSupportTickets({ status: "OPEN" });
+  const { data: flagsData, isLoading: flagsLoading } = useFlags({ status: "PENDING" });
+
+  const tickets = ticketsData?.tickets || [];
+  const flags = flagsData?.flags || [];
 
   return (
     <div className="space-y-6">
@@ -105,8 +75,8 @@ export default function Support() {
                     </td>
                     <td className="p-4 text-muted-foreground">{t.date}</td>
                     <td className="p-4 text-right">
-                      <button className="p-1.5 hover:bg-muted rounded-lg" onClick={(e) => { e.stopPropagation(); setSelectedTicket(t); }}>
-                        <Eye className="w-4 h-4 text-muted-foreground" />
+                      <button type="button" aria-label={`View ticket ${t.id}`} className="p-1.5 hover:bg-muted rounded-lg" onClick={(e) => { e.stopPropagation(); setSelectedTicket(t); }}>
+                          <Eye className="w-4 h-4 text-muted-foreground" />
                       </button>
                     </td>
                   </tr>
@@ -155,10 +125,10 @@ export default function Support() {
                     <td className="p-4 text-muted-foreground">{f.reason}</td>
                     <td className="p-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <button className="p-1.5 hover:bg-muted rounded-lg" onClick={(e) => { e.stopPropagation(); setSelectedFlag(f); }}>
+                        <button type="button" aria-label={`View flag ${f.id}`} className="p-1.5 hover:bg-muted rounded-lg" onClick={(e) => { e.stopPropagation(); setSelectedFlag(f); }}>
                           <Eye className="w-4 h-4 text-muted-foreground" />
                         </button>
-                        <button className="p-1.5 hover:bg-muted rounded-lg" onClick={(e) => e.stopPropagation()}>
+                        <button type="button" aria-label={`Delete flag ${f.id}`} className="p-1.5 hover:bg-muted rounded-lg" onClick={(e) => e.stopPropagation()}>
                           <Trash2 className="w-4 h-4 text-muted-foreground" />
                         </button>
                       </div>

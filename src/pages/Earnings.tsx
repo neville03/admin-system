@@ -4,20 +4,11 @@ import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, ResponsiveContainer, Tooltip } from "recharts";
 
-const trendData = [
-  { month: "Apr", revenue: 20000 },
-  { month: "May", revenue: 25000 },
-  { month: "Jun", revenue: 35000 },
-  { month: "Jul", revenue: 28000 },
-  { month: "Aug", revenue: 42000 },
-  { month: "Sep", revenue: 38000 },
-  { month: "Oct", revenue: 45000 },
-];
+// Chart data - replace with API integration when available
+const trendData: { month: string; revenue: number }[] = [];
 
-const vendors = [
-  { name: "Bamboo Grove Retreat", initials: "BG", tier: "FREE PLAN", earnings: "UGX 0.00", tierColor: "text-success" },
-  { name: "Elite Garden Venues", initials: "EG", tier: "PAID PLAN", earnings: "UGX 18,200.00", tierColor: "text-primary" },
-];
+// Vendors data - replace with API integration when available
+const vendors: any[] = [];
 
 export default function Earnings() {
   return (

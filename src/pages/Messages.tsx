@@ -4,32 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-const mockMessages = [
-  {
-    id: "1",
-    sender: "Sarah Jenkins",
-    initials: "SJ",
-    preview: "This host was extremely rude and unprofessional during the booking process. ..........",
-    time: "Oct 24, 02:45 PM",
-    tag: "Support",
-    unread: true,
-    messages: [
-      { from: "user", text: "This host was extremely rude and unprofessional during the booking process. I tried to ask about the catering options for my corporate event and they ghosted me for three days, then replied with a single word \"No\". I would like a refund or a formal investigation into their behavior.", time: "10:24 AM", sender: "Sarah Jenkins" },
-      { from: "admin", text: "Hello Sarah, thank you for reaching out. We are currently reviewing the screenshots provided and will take appropriate action. One of our specialists will get back to you within 2 hours.", time: "10:45 AM", sender: "Admin (Support Team)" },
-      { from: "user", text: "Thank you. Please let me know if you need any further information from my side.", time: "11:02 AM", sender: "Sarah Jenkins" },
-    ],
-  },
-  {
-    id: "2",
-    sender: "Tech Corp Mixer",
-    initials: "TC",
-    preview: "We have reviewed the initial quote and would like to request some changes to the catering menu...",
-    time: "Nov 02, 10:15 AM",
-    tag: "Flag",
-    unread: false,
-    messages: [],
-  },
-];
+// Messages data - replace with API integration when available
+const mockMessages: any[] = [];
 
 export default function Messages() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -44,7 +20,7 @@ export default function Messages() {
         {/* Chat area */}
         <div className="flex-1 bg-card rounded-xl border border-border flex flex-col">
           <div className="p-4 border-b border-border flex items-center gap-3">
-            <button onClick={() => setSelectedId(null)} className="p-1 hover:bg-muted rounded">
+            <button type="button" aria-label="Go back" onClick={() => setSelectedId(null)} className="p-1 hover:bg-muted rounded">
               <ArrowLeft className="w-5 h-5 text-muted-foreground" />
             </button>
             <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-sm font-semibold">
@@ -68,8 +44,8 @@ export default function Messages() {
           </div>
 
           <div className="p-4 border-t border-border flex items-center gap-3">
-            <button className="p-2 hover:bg-muted rounded-lg"><Paperclip className="w-5 h-5 text-muted-foreground" /></button>
-            <button className="p-2 hover:bg-muted rounded-lg"><Smile className="w-5 h-5 text-muted-foreground" /></button>
+            <button type="button" aria-label="Attach file" className="p-2 hover:bg-muted rounded-lg"><Paperclip className="w-5 h-5 text-muted-foreground" /></button>
+            <button type="button" aria-label="Add emoji" className="p-2 hover:bg-muted rounded-lg"><Smile className="w-5 h-5 text-muted-foreground" /></button>
             <Input
               value={messageInput}
               onChange={(e) => setMessageInput(e.target.value)}
@@ -93,7 +69,7 @@ export default function Messages() {
           <div className="bg-card rounded-xl border border-border p-6">
             <div className="flex items-center justify-between mb-3">
               <h4 className="font-semibold text-foreground">Shared Files</h4>
-              <button className="text-xs text-primary font-medium">View All</button>
+              <button type="button" aria-label="View all files" className="text-xs text-primary font-medium">View All</button>
             </div>
             <div className="flex items-center justify-between p-3 bg-muted rounded-lg">
               <div className="flex items-center gap-3">
@@ -105,7 +81,7 @@ export default function Messages() {
                   <p className="text-xs text-muted-foreground">156 KB • Oct 14</p>
                 </div>
               </div>
-              <button className="p-1"><Download className="w-4 h-4 text-muted-foreground" /></button>
+              <button type="button" aria-label="Download file" className="p-1"><Download className="w-4 h-4 text-muted-foreground" /></button>
             </div>
           </div>
           <Button className="w-full bg-success hover:bg-success/90 text-success-foreground font-semibold">

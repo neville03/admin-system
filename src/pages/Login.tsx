@@ -1,29 +1,42 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
 import logo from "@/assets/logo-full.png";
+import { useAuth } from "@/lib/auth";
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { toast } = useToast();
+  const { login, isLoading } = useAuth();
+  
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [keepLoggedIn, setKeepLoggedIn] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const from = (location.state as { from?: Location })?.from?.pathname || "/dashboard";
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError("");
+
     try {
-      // TODO: Replace with actual API call
-      // const { token } = await api.auth.login(email, password);
-      // localStorage.setItem("auth_token", token);
-      localStorage.setItem("auth_token", "demo-token");
-      navigate("/dashboard");
-    } catch {
-      // handle error
+      await login(email, password);
+      toast({
+        title: "Welcome back!",
+        description: "You have successfully logged in.",
+      });
+      navigate(from, { replace: true });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Login failed";
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -42,6 +55,12 @@ export default function Login() {
             Enter your credentials to access the dashboard.
           </p>
         </div>
+
+        {error && (
+          <div className="p-3 rounded-lg bg-destructive/10 border border-destructive/20 text-destructive text-sm">
+            {error}
+          </div>
+        )}
 
         <form onSubmit={handleLogin} className="space-y-5">
           <div className="space-y-2">
@@ -83,7 +102,7 @@ export default function Login() {
 
           <Button
             type="submit"
-            disabled={loading}
+            disabled={loading || isLoading}
             className="w-full h-12 text-base font-semibold bg-primary hover:bg-primary/90"
           >
             {loading ? "Logging in..." : "Log In"}

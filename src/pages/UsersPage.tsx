@@ -10,17 +10,40 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import UserProfileCard from "@/components/users/UserProfileCard";
-
-const mockUsers = [
-  { id: "USR-8895", name: "Marcus Chen", initials: "MC", email: "marcus.v@vendor.co", role: "Vendor" as const, joinDate: "Sep 28, 2023", location: "Kampala, Uganda.", events: 12, yearsExp: 5, rating: 4.9, totalReviews: 84 },
-  { id: "USR-8902", name: "Sarah Jenkins", initials: "SJ", email: "s.jenkins@example.com", role: "Host" as const, joinDate: "Oct 12, 2023", location: "Kampala, Uganda.", eventsHosted: 12, reviewsGiven: 25, vendorsBooked: 8 },
-  { id: "USR-8831", name: "Royal Touch Decor", initials: "RD", email: "thomas@eventsplus.org", role: "Vendor" as const, joinDate: "Jul 30, 2023", location: "Kampala, Uganda.", events: 12, yearsExp: 5, rating: 4.9, totalReviews: 84 },
-  { id: "USR-8842", name: "Elena Rodriguez", initials: "ER", email: "e.rodriguez@mail.com", role: "Host" as const, joinDate: "Aug 15, 2023", location: "Kampala, Uganda.", eventsHosted: 8, reviewsGiven: 15, vendorsBooked: 5 },
-];
+import { useUsers } from "@/lib/api/hooks";
+import { format } from "date-fns";
 
 export default function UsersPage() {
   const [search, setSearch] = useState("");
-  const [selectedUser, setSelectedUser] = useState<typeof mockUsers[0] | null>(null);
+  const [roleFilter, setRoleFilter] = useState<string>("all");
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [page, setPage] = useState(0);
+  const pageSize = 10;
+
+  const { data, isLoading } = useUsers({
+    role: roleFilter,
+    search: search || undefined,
+    limit: pageSize,
+    page: page,
+  });
+
+  const users = (data?.users || []).map((user) => ({
+    id: user.id,
+    name: user.accountType === "VENDOR" && (user as any).businessName
+      ? (user as any).businessName
+      : `${user.firstName} ${user.lastName}`,
+    initials: user.accountType === "VENDOR" && (user as any).businessName
+      ? (user as any).businessName.substring(0, 2).toUpperCase()
+      : `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase(),
+    email: user.email,
+    role: user.accountType === "VENDOR" ? "Vendor" : "Host",
+    joinDate: format(new Date(user.createdAt), "MMM d, yyyy"),
+    location: user.location || undefined,
+    isActive: user.isActive,
+  }));
+
+  const totalUsers = data?.total || 0;
+  const totalPages = Math.ceil(totalUsers / pageSize);
 
   return (
     <div className="space-y-6">
@@ -42,10 +65,16 @@ export default function UsersPage() {
             placeholder="Search by name, email or ID..."
             className="pl-10 border-none bg-secondary"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(0);
+            }}
           />
         </div>
-        <Select>
+        <Select value={roleFilter} onValueChange={(value) => {
+          setRoleFilter(value);
+          setPage(0);
+        }}>
           <SelectTrigger className="w-36">
             <SelectValue placeholder="All Roles" />
           </SelectTrigger>
@@ -55,16 +84,6 @@ export default function UsersPage() {
             <SelectItem value="host">Host</SelectItem>
           </SelectContent>
         </Select>
-        <Select>
-          <SelectTrigger className="w-36">
-            <SelectValue placeholder="All Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="suspended">Suspended</SelectItem>
-          </SelectContent>
-        </Select>
         <Button variant="outline" size="sm" className="gap-2">
           <SlidersHorizontal className="w-4 h-4" /> More Filters
         </Button>
@@ -72,67 +91,124 @@ export default function UsersPage() {
 
       {/* Table */}
       <div className="bg-card rounded-xl border border-border overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-border">
-              <th className="text-left p-4 text-xs font-semibold text-muted-foreground tracking-wider">USER ID</th>
-              <th className="text-left p-4 text-xs font-semibold text-muted-foreground tracking-wider">NAME</th>
-              <th className="text-left p-4 text-xs font-semibold text-muted-foreground tracking-wider">EMAIL</th>
-              <th className="text-left p-4 text-xs font-semibold text-muted-foreground tracking-wider">ROLE</th>
-              <th className="text-left p-4 text-xs font-semibold text-muted-foreground tracking-wider">JOIN DATE</th>
-              <th className="text-right p-4 text-xs font-semibold text-muted-foreground tracking-wider">ACTIONS</th>
-            </tr>
-          </thead>
-          <tbody>
-            {mockUsers.map((user) => (
-              <tr key={user.id} className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => setSelectedUser(user)}>
-                <td className="p-4 text-muted-foreground">#{user.id}</td>
-                <td className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-accent flex items-center justify-center text-xs font-semibold text-accent-foreground">
-                      {user.initials}
-                    </div>
-                    <span className="font-medium text-foreground">{user.name}</span>
-                  </div>
-                </td>
-                <td className="p-4 text-muted-foreground">{user.email}</td>
-                <td className="p-4">
-                  <span className="bg-accent text-accent-foreground text-xs font-medium px-2.5 py-1 rounded-full">
-                    {user.role}
-                  </span>
-                </td>
-                <td className="p-4 text-muted-foreground">{user.joinDate}</td>
-                <td className="p-4 text-right">
-                  <div className="flex items-center justify-end gap-2">
-                    <button
-                      className="p-1.5 hover:bg-muted rounded-lg transition-colors"
-                      onClick={(e) => { e.stopPropagation(); setSelectedUser(user); }}
-                    >
-                      <Eye className="w-4 h-4 text-muted-foreground" />
-                    </button>
-                    <button className="p-1.5 hover:bg-muted rounded-lg transition-colors" onClick={(e) => e.stopPropagation()}>
-                      <Trash2 className="w-4 h-4 text-muted-foreground" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {/* Pagination */}
-        <div className="p-4 flex items-center justify-between border-t border-border">
-          <p className="text-sm text-muted-foreground">Showing 1 to 4 of 1,234 users</p>
-          <div className="flex items-center gap-1">
-            <Button variant="outline" size="sm" disabled>Previous</Button>
-            <Button size="sm" className="bg-primary text-primary-foreground h-8 w-8 p-0">1</Button>
-            <Button variant="outline" size="sm" className="h-8 w-8 p-0">2</Button>
-            <Button variant="outline" size="sm" className="h-8 w-8 p-0">3</Button>
-            <span className="px-1 text-muted-foreground">…</span>
-            <Button variant="outline" size="sm" className="h-8 w-8 p-0">124</Button>
-            <Button variant="outline" size="sm">Next</Button>
+        {isLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
-        </div>
+        ) : (
+          <>
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left p-4 text-xs font-semibold text-muted-foreground tracking-wider">USER ID</th>
+                  <th className="text-left p-4 text-xs font-semibold text-muted-foreground tracking-wider">NAME</th>
+                  <th className="text-left p-4 text-xs font-semibold text-muted-foreground tracking-wider">EMAIL</th>
+                  <th className="text-left p-4 text-xs font-semibold text-muted-foreground tracking-wider">ROLE</th>
+                  <th className="text-left p-4 text-xs font-semibold text-muted-foreground tracking-wider">JOIN DATE</th>
+                  <th className="text-right p-4 text-xs font-semibold text-muted-foreground tracking-wider">ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="p-8 text-center text-muted-foreground">
+                      No users found
+                    </td>
+                  </tr>
+                ) : (
+                  users.map((user) => (
+                    <tr key={user.id} className="border-b border-border last:border-0 hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => setSelectedUser(user)}>
+                      <td className="p-4 text-muted-foreground">#{user.id}</td>
+                      <td className="p-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-full bg-accent flex items-center justify-center text-xs font-semibold text-accent-foreground">
+                            {user.initials}
+                          </div>
+                          <span className="font-medium text-foreground">{user.name}</span>
+                        </div>
+                      </td>
+                      <td className="p-4 text-muted-foreground">{user.email}</td>
+                      <td className="p-4">
+                        <span className="bg-accent text-accent-foreground text-xs font-medium px-2.5 py-1 rounded-full">
+                          {user.role}
+                        </span>
+                      </td>
+                      <td className="p-4 text-muted-foreground">{user.joinDate}</td>
+                      <td className="p-4 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            className="p-1.5 hover:bg-muted rounded-lg transition-colors"
+                            onClick={(e) => { e.stopPropagation(); setSelectedUser(user); }}
+                            title="View details"
+                          >
+                            <Eye className="w-4 h-4 text-muted-foreground" />
+                          </button>
+                          <button
+                            className="p-1.5 hover:bg-muted rounded-lg transition-colors"
+                            onClick={(e) => e.stopPropagation()}
+                            title="Delete user"
+                          >
+                            <Trash2 className="w-4 h-4 text-muted-foreground" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+
+            {/* Pagination */}
+            {totalUsers > 0 && (
+              <div className="p-4 flex items-center justify-between border-t border-border">
+                <p className="text-sm text-muted-foreground">
+                  Showing {page * pageSize + 1} to {Math.min((page + 1) * pageSize, totalUsers)} of {totalUsers} users
+                </p>
+                <div className="flex items-center gap-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={page === 0}
+                    onClick={() => setPage(page - 1)}
+                  >
+                    Previous
+                  </Button>
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    let pageNum: number;
+                    if (totalPages <= 5) {
+                      pageNum = i;
+                    } else if (page < 2) {
+                      pageNum = i;
+                    } else if (page > totalPages - 3) {
+                      pageNum = totalPages - 5 + i;
+                    } else {
+                      pageNum = page - 2 + i;
+                    }
+                    return (
+                      <Button
+                        key={pageNum}
+                        variant={page === pageNum ? "default" : "outline"}
+                        size="sm"
+                        className={page === pageNum ? "bg-primary text-primary-foreground h-8 w-8 p-0" : "h-8 w-8 p-0"}
+                        onClick={() => setPage(pageNum)}
+                      >
+                        {pageNum + 1}
+                      </Button>
+                    );
+                  })}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={page >= totalPages - 1}
+                    onClick={() => setPage(page + 1)}
+                  >
+                    Next
+                  </Button>
+                </div>
+              </div>
+            )}
+          </>
+        )}
       </div>
 
       {selectedUser && (
